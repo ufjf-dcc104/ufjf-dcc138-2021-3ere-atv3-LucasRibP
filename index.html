@@ -14,20 +14,21 @@
       const ctx = canvas.getContext("2d");
       const ryu = new Image();
       const spritePropor = 1;
+      let spriteState = 0;
       ryu.src = "assets/ryu.gif";
 
       ryu.addEventListener("load", terminouDeCarregar);
 
-      ctx.fillStyle = "green";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      function desenhaFundo() {
+        ctx.fillStyle = "#708888";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
       const animations = {
         idle: geraAnimacao(0, 15, 50, 85, 4, 0, 0),
       };
 
-      function terminouDeCarregar() {
-        ctx.drawImage(ryu, ...animations.idle[1]);
-      }
+      function terminouDeCarregar() {}
 
       function geraAnimacao(
         blockStartWidth,
@@ -53,6 +54,23 @@
           ]);
         }
         return posicoes;
+      }
+
+      let t0;
+      let dt;
+
+      requestAnimationFrame(passo);
+      function passo(t) {
+        t0 = t0 ?? t;
+        dt = (t - t0) / 1000;
+
+        spriteState += 5 * dt;
+
+        desenhaFundo();
+        ctx.drawImage(ryu, ...animations.idle[Math.floor(spriteState) % 4]);
+
+        requestAnimationFrame(passo);
+        t0 = t;
       }
     </script>
   </body>
