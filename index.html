@@ -13,6 +13,7 @@
       const canvas = document.querySelector("canvas");
       const ctx = canvas.getContext("2d");
       const ryu = new Image();
+      const spritePropor = 1;
       ryu.src = "assets/ryu.gif";
 
       ryu.addEventListener("load", terminouDeCarregar);
@@ -20,8 +21,38 @@
       ctx.fillStyle = "green";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      const animations = {
+        idle: geraAnimacao(0, 15, 50, 85, 4, 0, 0),
+      };
+
       function terminouDeCarregar() {
-        ctx.drawImage(ryu, 0, 0);
+        ctx.drawImage(ryu, ...animations.idle[1]);
+      }
+
+      function geraAnimacao(
+        blockStartWidth,
+        blockStartHeight,
+        spriteWidth,
+        spriteHeight,
+        spriteNumber,
+        printX,
+        printY
+      ) {
+        const posicoes = [];
+        for (let i = 0; i < spriteNumber; i++) {
+          const startWidth = blockStartWidth + spriteWidth * i;
+          posicoes.push([
+            startWidth,
+            blockStartHeight,
+            spriteWidth,
+            spriteHeight,
+            printX,
+            printY,
+            spriteWidth / spritePropor,
+            spriteHeight / spritePropor,
+          ]);
+        }
+        return posicoes;
       }
     </script>
   </body>
