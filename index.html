@@ -25,7 +25,10 @@
       }
 
       const animations = {
-        idle: geraAnimacao(0, 15, 50, 85, 4, 0, 0),
+        idle: {
+          anim: geraAnimacao(0, 15, 50, 85, 4, 0, 0),
+          nFrames: 4,
+        },
       };
 
       function terminouDeCarregar() {}
@@ -53,7 +56,7 @@
             spriteHeight / spritePropor,
           ]);
         }
-        return posicoes;
+        return (i) => posicoes[Math.floor(i) % spriteNumber];
       }
 
       let t0;
@@ -67,7 +70,7 @@
         spriteState += 5 * dt;
 
         desenhaFundo();
-        ctx.drawImage(ryu, ...animations.idle[Math.floor(spriteState) % 4]);
+        ctx.drawImage(ryu, ...animations.idle.anim(spriteState));
 
         requestAnimationFrame(passo);
         t0 = t;
