@@ -26,8 +26,24 @@
 
       const animations = {
         idle: {
-          anim: geraAnimacao(0, 15, 50, 85, 4, 0, 0),
+          anim: geraAnimacao(3, 15, 49, 85, 4),
           nFrames: 4,
+        },
+        crouch: {
+          anim: geraAnimacao(1110, 15, 47, 85, 2),
+          nFrames: 2,
+        },
+        uncrouch: {
+          anim: geraAnimacao(1110, 15, 47, 85, 2, (reversed = true)),
+          nFrames: 2,
+        },
+        idle2: {
+          anim: geraAnimacao(3, 15, 49, 85, 4),
+          nFrames: 4,
+        },
+        kick: {
+          anim: geraAnimacao(685, 250, 55, 100, 5),
+          nFrames: 5,
         },
       };
 
@@ -40,9 +56,10 @@
         spriteHeight,
         spriteNumber,
         printX,
-        printY
+        printY,
+        reversed = false
       ) {
-        const posicoes = [];
+        let posicoes = [];
         for (let i = 0; i < spriteNumber; i++) {
           const startWidth = blockStartWidth + spriteWidth * i;
           posicoes.push([
@@ -50,17 +67,24 @@
             blockStartHeight,
             spriteWidth,
             spriteHeight,
-            printX,
-            printY,
+            0,
+            canvas.height - spriteHeight,
             spriteWidth / spritePropor,
             spriteHeight / spritePropor,
           ]);
+        }
+        if (reversed) {
+          posicoes = posicoes.reverse();
         }
         return (i) => posicoes[Math.floor(i) % spriteNumber];
       }
 
       let t0;
       let dt;
+      let totalFrames = 0;
+      for (let anim in animations) {
+        totalFrames += animations[anim].nFrames;
+      }
 
       requestAnimationFrame(passo);
       function passo(t) {
@@ -68,10 +92,22 @@
         dt = (t - t0) / 1000;
 
         spriteState += 5 * dt;
-
         desenhaFundo();
-        ctx.drawImage(ryu, ...animations.idle.anim(spriteState));
 
+        let curState = spriteState % totalFrames;
+        let animFunc;
+
+        for (let anim in animations) {
+          console.log(curState);
+          if (curState < animations[anim].nFrames) {
+            animFunc = animations[anim].anim;
+            break;
+          } else {
+            curState -= animations[anim].nFrames;
+          }
+        }
+
+        ctx.drawImage(ryu, ...animFunc(curState));
         requestAnimationFrame(passo);
         t0 = t;
       }
